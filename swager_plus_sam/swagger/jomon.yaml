@@ -1,0 +1,142 @@
+---
+swagger: "2.0"
+info:
+  description: "Api Test Jomon"
+  version: "1.0.0"
+  title: "Api Test Jomon"
+host: "reqres.in"
+basePath: "/api"
+schemes:
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /users:
+    get:
+      tags:
+      - "Users"
+      summary: "Search for Users"
+      description: "Returns Users."
+      parameters: []
+      responses:
+        200:
+          description: "All Users objects, limited by any query parameters."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/users"
+    post:
+      tags:
+      - "User"
+      summary: "Creates a User object."
+      description: "Adds a new User object to the User list."
+      parameters:
+      - in: "body"
+        name: "users"
+        description: "The User object to create/update."
+        required: false
+        schema:
+          $ref: "#/definitions/users"
+      responses:
+        201:
+          description: "User object successfully created"
+          schema:
+            $ref: "#/definitions/users"
+          headers:
+            Location:
+              type: "string"
+              format: "path-absolute"
+              description: "Path to the User, e.g. \"/users/1234\""
+        400:
+          description: "User could not be created due to client error. See body for\
+            \ details."
+  /users/{userID}:
+    get:
+      tags:
+      - "User"
+      summary: "Get User object by User ID."
+      description: "Returns a user object."
+      parameters:
+      - name: "userID"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "User object."
+          schema:
+            $ref: "#/definitions/users"
+        404:
+          description: "A User with this ID does not exist."
+    put:
+      tags:
+      - "User"
+      summary: "Update an existing User object."
+      description: "Update an existing User object. Optimistic locking with ETag and\
+        \ If-Match."
+      parameters:
+      - name: "userID"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "users"
+        description: "The User object to create/update."
+        required: false
+        schema:
+          $ref: "#/definitions/users"
+      responses:
+        204:
+          description: "User successfully updated."
+        400:
+          description: "User could not be updated due to client error. See body for\
+            \ details."
+        404:
+          description: "User for provided ID could not be found, therefore could not\
+            \ be updated."
+        412:
+          description: "User could not be updated due to missing If-Match header."
+    delete:
+      tags:
+      - "User"
+      summary: "Delete an existing User object."
+      description: "Delete an existing User object If-Match."
+      parameters:
+      - name: "userID"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: "User successfully deleted."
+        404:
+          description: "User for provided ID could not be found, therefore could not\
+            \ be deleted."
+        412:
+          description: "User could not be deleted due to missing If-Match header."
+definitions:
+  users:
+    properties:
+      id:
+        type: "number"
+      first_name:
+        type: "string"
+      last_name:
+        type: "string"
+      avatar:
+        type: "string"
+    example:
+      last_name: "last_name"
+      id: 0.80082819046101150206595775671303272247314453125
+      avatar: "avatar"
+      first_name: "first_name"
+parameters:
+  users:
+    in: "body"
+    name: "users"
+    description: "The User object to create/update."
+    required: false
+    schema:
+      $ref: "#/definitions/users"

@@ -1,0 +1,190 @@
+---
+swagger: "2.0"
+info:
+  description: "Flower Shop"
+  version: "2"
+  title: "Flower Shop"
+  contact:
+    email: "sonia@soupedup.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "virtserver.swaggerhub.com"
+basePath: "/sonialiju/testApi/1.0.0"
+tags:
+- name: "shopowner"
+  description: "only shop owner can do this action"
+- name: "users"
+  description: "Operations available to regular users"
+schemes:
+- "https"
+paths:
+  /flowers:
+    get:
+      tags:
+      - "users"
+      summary: "List all flowers"
+      description: "List all the flowers in the shop\n"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "List of flowers"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/FlowerItem"
+        400:
+          description: "No flowers found"
+    post:
+      tags:
+      - "shopowner"
+      summary: "adds an flower item"
+      description: "Adds a flower to the shop"
+      operationId: "addFlower"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "flowerItem"
+        description: "Flower item to add"
+        required: false
+        schema:
+          $ref: "#/definitions/FlowerItem"
+      responses:
+        201:
+          description: "item created"
+        400:
+          description: "invalid input, object invalid"
+        409:
+          description: "an existing item already exists"
+  /flowers/{flowerID}:
+    get:
+      tags:
+      - "users"
+      summary: "Get flower with a given ID."
+      description: "Returns a flower object."
+      parameters:
+      - name: "flowerID"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Flower object."
+          schema:
+            $ref: "#/definitions/FlowerItem"
+        404:
+          description: "A Flower with this ID does not exist."
+    put:
+      tags:
+      - "shopowner"
+      summary: "Update an existing flower object."
+      description: "Update an existing Flower object."
+      parameters:
+      - name: "flowerID"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "flowers"
+        description: "The Flower object to create/update."
+        required: false
+        schema:
+          $ref: "#/definitions/FlowerItem"
+      responses:
+        204:
+          description: "User successfully updated."
+        400:
+          description: "User could not be updated due to client error. See body for\
+            \ details."
+        404:
+          description: "User for provided ID could not be found, therefore could not\
+            \ be updated."
+        412:
+          description: "User could not be updated due to missing If-Match header."
+    delete:
+      tags:
+      - "shopowner"
+      summary: "Delete an existing Flower object."
+      description: "Delete an existing Flower object If-Match."
+      parameters:
+      - name: "flowerID"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: "Flower successfully deleted."
+        404:
+          description: "Flower for provided ID could not be found, therefore could\
+            \ not be deleted."
+        412:
+          description: "Flower could not be deleted due to missing If-Match header."
+definitions:
+  FlowerItem:
+    type: "object"
+    required:
+    - "bestbeforeDate"
+    - "category"
+    - "color"
+    - "distributor"
+    - "id"
+    - "name"
+    properties:
+      id:
+        type: "number"
+        example: 123
+      name:
+        type: "string"
+        example: "Lilly"
+      color:
+        type: "string"
+        example: "White"
+      bestbeforeDate:
+        type: "string"
+        example: "2016-08-29T09"
+      category:
+        $ref: "#/definitions/Category"
+      distributor:
+        $ref: "#/definitions/Distributor"
+    example:
+      color: "White"
+      bestbeforeDate: "2016-08-29T09"
+      name: "Lilly"
+      id: 123
+      category:
+        name: "Wedding Flowers"
+        description: "Flowers in white"
+      distributor:
+        phone: "408-867-5309"
+        name: "FlowerMart Corp."
+  Category:
+    required:
+    - "name"
+    properties:
+      name:
+        type: "string"
+        example: "Wedding Flowers"
+      description:
+        type: "string"
+        example: "Flowers in white"
+    example:
+      name: "Wedding Flowers"
+      description: "Flowers in white"
+  Distributor:
+    required:
+    - "name"
+    properties:
+      name:
+        type: "string"
+        example: "FlowerMart Corp."
+      phone:
+        type: "string"
+        example: "408-867-5309"
+    example:
+      phone: "408-867-5309"
+      name: "FlowerMart Corp."
